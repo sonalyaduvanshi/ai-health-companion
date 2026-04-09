@@ -311,31 +311,3 @@ if st.button(L['analyze_btn']):
         </div>""", unsafe_allow_html=True)
 
 
-# CHATBOT 
-
-st.divider()
-st.subheader(f"💬 {L['ask_ai']}")
-user_q = st.text_input(L['ai_placeholder'])
-if st.button(L['ai_btn']):
-    if user_q:
-        prompt = f"Explain in simple {sel_lang} language: {user_q}"
-        
-        try:
-            resp = ai_model.generate_content(prompt)
-            st.info(resp.text)
-        
-        except Exception as e:
-            st.error(f"Real Error: {str(e)}")
-
-       # Floating Rhyme Chatbot 
-
-display_name = p_name if p_name else ("Buddy" if sel_lang=="English" else "दोस्त")
-
-st.markdown(f"""
-    <div style="position:fixed; bottom:20px; right:20px; width:300px; background:#0f172a; border:2px solid #3b82f6; border-radius:20px; padding:15px; z-index:1000;">
-        <b style="color:#60a5fa;">🤖 Health Buddy AI</b><br><br>
-        <span style="font-size:14px; color:white;">
-            {L['rhyme'].format(display_name)}
-        </span>
-    </div>
-""", unsafe_allow_html=True)
