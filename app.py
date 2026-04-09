@@ -65,11 +65,13 @@ st.set_page_config(page_title="Healthy Buddy Pro", page_icon="🌐", layout="wid
 # Gemini Setup
 
 import os
-
-API_KEY = os.getenv("GEMINI_API_KEY")
+try:
+    API_KEY = st.secrets["GEMINI_API_KEY"]
+except:
+    API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
-    st.error("API Key not found. Please set in Streamlit Secrets")
+    st.error("❌ API Key missing")
     st.stop()
 
 genai.configure(api_key=API_KEY)
@@ -316,10 +318,19 @@ user_q = st.text_input(L['ai_placeholder'])
 if st.button(L['ai_btn']):
     if user_q:
         prompt = f"Answer the following health query in {sel_lang} language briefly: {user_q}"
-        resp = ai_model.generate_content(prompt)
-        st.info(resp.text)
+    try:
+    resp = ai_model.generate_content(prompt)
 
-# Floating Rhyme Chatbot 
+    if hasattr(resp, "text") and resp.text:
+        st.success(resp.text)
+    else:
+        st.warning("⚠️ No response from AI")
+
+except Exception as e:
+    st.error("❌ AI Error (Check API Key / Quota)")
+    st.write(str(e))     
+
+       # Floating Rhyme Chatbot 
 
 display_name = p_name if p_name else ("Buddy" if sel_lang=="English" else "दोस्त")
 
