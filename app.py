@@ -8,9 +8,7 @@ from fpdf import FPDF
 import joblib
 from datetime import datetime, timedelta
 
-# ---------- LOGIN SYSTEM ----------
-import streamlit as st
-# ---------- AUTH SYSTEM ----------
+
 if "users" not in st.session_state:
     st.session_state.users = {}
 
@@ -29,42 +27,47 @@ def auth():
     username = st.text_input("Username").strip().lower()
     password = st.text_input("Password", type="password").strip()
 
-    # -------- SIGNUP --------
+    # SIGNUP 
+
     if choice == "Signup":
         if st.button("Create Account"):
             if username in st.session_state.users:
-                st.warning("User already exists ⚠️")
+                st.warning("User already exists ")
             else:
                 st.session_state.users[username] = password
-                st.success("Account Created ✅ Now Login")
+                st.success("Account Created Now Login")
 
-    # -------- LOGIN --------
+    #  LOGIN 
+
     if choice == "Login":
         if st.button("Login"):
             if username in st.session_state.users and st.session_state.users[username] == password:
                 st.session_state.logged_in = True
                 st.session_state.current_user = username
-                st.success(f"Welcome {username} 🎉")
+                st.success(f"Welcome {username} ")
                 st.rerun()
             else:
                 st.error("Invalid Credentials ❌")
 
 
-# 🔐 SHOW LOGIN FIRST
+# SHOW LOGIN FIRST
+
 if not st.session_state.logged_in:
     auth()
     st.stop()
 
 
 
-# ---------------- 1. SETUP & CONFIG ----------------
+# SETUP & CONFIG 
+
 st.set_page_config(page_title="Healthy Buddy Pro", page_icon="🌐", layout="wide")
 
 # Gemini Setup
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 ai_model = genai.GenerativeModel("gemini-pro")
 
-# ---------------- 2. MULTI-LANGUAGE DICTIONARY ----------------
+# MULTI-LANGUAGE DICTIONARY 
 
 LANG_DATA = {
     "English": {
@@ -110,7 +113,8 @@ LANG_DATA = {
 
 
 
-# ---------------- 3. DETAILED DIET DATABASE ----------------
+#  DETAILED DIET DATABASE
+
 DETAILED_DIET = {
     "Diabetes": {
         "Morning": "🕒 8:00 AM: Soaked Methi seeds + Green Tea + 2 Oats Idli",
@@ -135,7 +139,8 @@ DETAILED_DIET = {
     }
 }
 
-# ---------------- 4. ENTERPRISE UI STYLING ----------------
+# ENTERPRISE UI STYLING 
+
 st.markdown("""
     <style>
     .stApp { background: #020617; color: #f1f5f9; }
@@ -155,7 +160,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# ---------------- 5. SIDEBAR & STATE DB ----------------
+
+# SIDEBAR & STATE DB 
 
 
 MASTER_HOSPITALS = {
@@ -206,9 +212,11 @@ with st.sidebar:
     st.divider()
     st.info("Health Tip: Drink at least 3L of water daily.")
 
-L = LANG_DATA[sel_lang] # Current Language Object
+L = LANG_DATA[sel_lang] 
 
-# ---------------- 6. MAIN INTERFACE ----------------
+
+#  MAIN INTERFACE
+
 st.markdown(f"<h1 style='text-align:center;'>🩺 {L['title']}</h1>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([2, 1])
@@ -238,7 +246,8 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
 
-# ---------------- 7. ANALYTICS & FUTURE PREDICTION ----------------
+# ANALYTICS & FUTURE PREDICTION 
+
 if st.button(L['analyze_btn']):
     # Risk Logic
     risk_score = (glucose/300 * 40) + (systolic/180 * 40) + (hba1c/12 * 20)
@@ -259,12 +268,16 @@ if st.button(L['analyze_btn']):
     with r2:
         st.subheader(f"📈 {L['future_head']}")
         months = ["Current", "Month 1", "Month 2", "Month 3", "Month 4", "Month 5"]
+
         # Simplified prediction logic for trend visualization
+
         trend = [risk_percent, risk_percent-2, risk_percent-5, risk_percent-8, risk_percent-12, risk_percent-15]
         fig_trend = px.line(x=months, y=trend, markers=True, template="plotly_dark")
         st.plotly_chart(fig_trend, use_container_width=True)
 
-    # 8. DETAILED DIET CHART (BIGGER DISPLAY)
+
+    #  DETAILED DIET CHART (BIGGER DISPLAY)
+
     st.divider()
     st.markdown(f"## {L['diet_head']} ({category})")
     diet = DETAILED_DIET[category]
@@ -285,7 +298,8 @@ if st.button(L['analyze_btn']):
             <p>{diet['Avoid']}</p>
         </div>""", unsafe_allow_html=True)
 
-# ---------------- 9. CHATBOT (Dynamic) ----------------
+
+# CHATBOT 
 
 st.divider()
 st.subheader(f"💬 {L['ask_ai']}")
@@ -297,7 +311,8 @@ if st.button(L['ai_btn']):
         resp = ai_model.generate_content(prompt)
         st.info(resp.text)
 
-# Floating Rhyme Chatbot (Yahan triple quotes ka dhyan rakhna)
+# Floating Rhyme Chatbot 
+
 display_name = p_name if p_name else ("Buddy" if sel_lang=="English" else "दोस्त")
 
 st.markdown(f"""
