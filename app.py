@@ -75,7 +75,7 @@ if not API_KEY:
     st.stop()
 
 genai.configure(api_key=API_KEY)
-ai_model = genai.GenerativeModel("gemini-1.5-flash")
+ai_model = genai.GenerativeModel("gemini-1.0-flash")
 
 # MULTI-LANGUAGE DICTIONARY 
 
@@ -260,6 +260,7 @@ with col2:
 
 if st.button(L['analyze_btn']):
     # Risk Logic
+
     risk_score = (glucose/300 * 40) + (systolic/180 * 40) + (hba1c/12 * 20)
     risk_percent = round(risk_score * 100, 1)
     
@@ -268,6 +269,7 @@ if st.button(L['analyze_btn']):
     else: category = "General"
 
     # Display Gauge and Future Chart
+
     r1, r2 = st.columns(2)
     with r1:
         st.subheader("📊 Risk Probability")
@@ -316,14 +318,14 @@ st.subheader(f"💬 {L['ask_ai']}")
 user_q = st.text_input(L['ai_placeholder'])
 if st.button(L['ai_btn']):
     if user_q:
-        prompt = f"Answer the following health query in {sel_lang} language briefly: {user_q}"
+        prompt = f"Explain in simple {sel_lang} language: {user_q}"
         
         try:
             resp = ai_model.generate_content(prompt)
             st.info(resp.text)
         
         except Exception as e:
-            st.error("AI Error: Check API Key or model config")
+            st.error(f"Real Error: {str(e)}")
 
        # Floating Rhyme Chatbot 
 
