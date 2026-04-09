@@ -64,8 +64,16 @@ st.set_page_config(page_title="Healthy Buddy Pro", page_icon="🌐", layout="wid
 
 # Gemini Setup
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-ai_model = genai.GenerativeModel("gemini-pro")
+import os
+
+API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not API_KEY:
+    st.error("API Key not found. Please set in Streamlit Secrets")
+    st.stop()
+
+genai.configure(api_key=API_KEY)
+ai_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # MULTI-LANGUAGE DICTIONARY 
 
