@@ -62,20 +62,6 @@ if not st.session_state.logged_in:
 
 st.set_page_config(page_title="Healthy Buddy Pro", page_icon="🌐", layout="wide")
 
-# Gemini Setup
-
-import os
-try:
-    API_KEY = st.secrets["GEMINI_API_KEY"]
-except:
-    API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not API_KEY:
-    st.error("❌ API Key missing")
-    st.stop()
-
-genai.configure(api_key=API_KEY)
-ai_model = genai.GenerativeModel("gemini-1.0-flash")
 
 # MULTI-LANGUAGE DICTIONARY 
 
