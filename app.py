@@ -314,21 +314,16 @@ if st.button(L['analyze_btn']):
 st.divider()
 st.subheader(f"💬 {L['ask_ai']}")
 user_q = st.text_input(L['ai_placeholder'])
-
 if st.button(L['ai_btn']):
     if user_q:
         prompt = f"Answer the following health query in {sel_lang} language briefly: {user_q}"
-    try:
-    resp = ai_model.generate_content(prompt)
-
-    if hasattr(resp, "text") and resp.text:
-        st.success(resp.text)
-    else:
-        st.warning("⚠️ No response from AI")
-
-except Exception as e:
-    st.error("❌ AI Error (Check API Key / Quota)")
-    st.write(str(e))     
+        
+        try:
+            resp = ai_model.generate_content(prompt)
+            st.info(resp.text)
+        
+        except Exception as e:
+            st.error("AI Error: Check API Key or model config")
 
        # Floating Rhyme Chatbot 
 
